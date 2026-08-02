@@ -8,6 +8,9 @@ $total_hotels = $pdo->query("SELECT COUNT(*) FROM hotels")->fetchColumn();
 $total_bookings = $pdo->query("SELECT COUNT(*) FROM bookings")->fetchColumn();
 $pending_reviews = $pdo->query("SELECT COUNT(*) FROM reviews WHERE status = 'Pending'")->fetchColumn();
 
+dt_ensure_inquiry_schema($pdo);
+$new_inquiries = (int)$pdo->query("SELECT COUNT(*) FROM inquiries WHERE status = 'New'")->fetchColumn();
+
 $b_stmt = $pdo->query("SELECT b.*, u.full_name AS tourist_name, u.phone AS tourist_phone, h.name AS hotel_name, h.image AS hotel_image, d.title AS destination_name FROM bookings b JOIN users u ON b.user_id = u.id JOIN hotels h ON b.hotel_id = h.id JOIN destinations d ON h.destination_id = d.id ORDER BY b.id DESC LIMIT 5");
 $recent_bookings = $b_stmt ? $b_stmt->fetchAll() : [];
 ?>
@@ -56,6 +59,19 @@ $recent_bookings = $b_stmt ? $b_stmt->fetchAll() : [];
                 <div class="metric-icon bg-danger text-white"><i class="fa-solid fa-comments"></i></div>
             </div>
         </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <a href="manage-inquiries.php?status=New" class="text-decoration-none">
+            <div class="metric-card" style="border-left-color:#7C3AED;">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="min-w-0">
+                        <span class="text-muted small fw-bold text-uppercase">New Inquiries</span>
+                        <h2 class="fw-bold text-dark mb-0"><?= $new_inquiries ?></h2>
+                    </div>
+                    <div class="metric-icon text-white" style="background:#7C3AED;"><i class="fa-solid fa-envelope-open-text"></i></div>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 

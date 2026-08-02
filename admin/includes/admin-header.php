@@ -15,6 +15,7 @@ $admin_nav = [
     ['file' => 'manage-hotels.php', 'icon' => 'fa-hotel', 'label' => 'Hotels'],
     ['file' => 'manage-bookings.php', 'icon' => 'fa-calendar-check', 'label' => 'Bookings'],
     ['file' => 'manage-reviews.php', 'icon' => 'fa-comments', 'label' => 'Reviews'],
+    ['file' => 'manage-inquiries.php', 'icon' => 'fa-envelope-open-text', 'label' => 'Inquiries'],
     ['file' => 'manage-users.php', 'icon' => 'fa-users', 'label' => 'Users'],
 ];
 ?>

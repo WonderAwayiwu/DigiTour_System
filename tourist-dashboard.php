@@ -61,6 +61,12 @@ $r_stmt = $pdo->prepare("SELECT r.*, d.title AS destination_name FROM reviews r 
 $r_stmt->execute([$user_id]);
 $user_reviews = $r_stmt->fetchAll();
 
+// Fetch User Inquiries + admin replies
+dt_ensure_inquiry_schema($pdo);
+$i_stmt = $pdo->prepare("SELECT * FROM inquiries WHERE user_id = ? ORDER BY id DESC");
+$i_stmt->execute([$user_id]);
+$user_inquiries = $i_stmt->fetchAll();
+
 $page_title = "Tourist Dashboard | DigiTour Ghana";
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/navbar.php';
@@ -257,7 +263,7 @@ require_once __DIR__ . '/includes/navbar.php';
                 </script>
 
                 <!-- My Reviews Table -->
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                     <div class="card-header bg-white py-3 border-bottom">
                         <h5 class="fw-bold text-dark mb-0"><i class="fa-solid fa-star text-warning me-2"></i> My Submitted Reviews</h5>
                     </div>
@@ -274,6 +280,47 @@ require_once __DIR__ . '/includes/navbar.php';
                                         </div>
                                         <div class="mb-2"><?= render_stars($r['rating']) ?></div>
                                         <p class="text-dark small mb-0"><?= sanitize($r['comment']) ?></p>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- My Inquiries + Admin Replies -->
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fa-solid fa-envelope-open-text text-success me-2"></i> My Inquiries</h5>
+                        <a href="inquiry.php" class="btn btn-sm btn-digitour-primary"><i class="fa-solid fa-plus me-1"></i> New Inquiry</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <?php if (empty($user_inquiries)): ?>
+                            <p class="text-center py-4 text-muted mb-0">You have not sent any inquiries yet. <a href="inquiry.php" class="fw-bold text-success">Ask the tourism board</a></p>
+                        <?php else: ?>
+                            <div class="list-group list-group-flush">
+                                <?php foreach ($user_inquiries as $inq): ?>
+                                    <div class="list-group-item p-3">
+                                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                                            <div class="min-w-0">
+                                                <h6 class="fw-bold mb-1"><?= sanitize($inq['subject']) ?></h6>
+                                                <small class="text-muted"><?= date('M d, Y · H:i', strtotime($inq['created_at'])) ?></small>
+                                            </div>
+                                            <?= status_badge($inq['status']) ?>
+                                        </div>
+                                        <p class="text-dark small mb-2" style="white-space:pre-wrap;"><?= sanitize($inq['message']) ?></p>
+                                        <?php if (!empty($inq['admin_reply'])): ?>
+                                            <div class="p-3 rounded-3 border border-success-subtle" style="background:#f0fdf4;">
+                                                <div class="d-flex flex-wrap justify-content-between gap-2 mb-1">
+                                                    <strong class="text-success small"><i class="fa-solid fa-reply me-1"></i> Tourism Board Reply</strong>
+                                                    <?php if (!empty($inq['replied_at'])): ?>
+                                                        <small class="text-muted"><?= date('M d, Y · H:i', strtotime($inq['replied_at'])) ?></small>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <p class="mb-0 small text-dark" style="white-space:pre-wrap;"><?= sanitize($inq['admin_reply']) ?></p>
+                                            </div>
+                                        <?php else: ?>
+                                            <small class="text-muted"><i class="fa-solid fa-hourglass-half me-1"></i> Awaiting admin reply…</small>
+                                        <?php endif; ?>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

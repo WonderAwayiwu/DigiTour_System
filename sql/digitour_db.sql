@@ -88,7 +88,9 @@ CREATE TABLE IF NOT EXISTS `inquiries` (
   `email` VARCHAR(100) NOT NULL,
   `subject` VARCHAR(150) NOT NULL,
   `message` TEXT NOT NULL,
-  `status` ENUM('New', 'Replied') DEFAULT 'New',
+  `admin_reply` TEXT NULL,
+  `replied_at` TIMESTAMP NULL DEFAULT NULL,
+  `status` ENUM('New', 'Replied', 'Resolved') DEFAULT 'New',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

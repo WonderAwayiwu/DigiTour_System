@@ -32,6 +32,13 @@ if ($type === 'destinations') {
     foreach ($rows as $row) {
         fputcsv($output, $row);
     }
+} elseif ($type === 'inquiries') {
+    dt_ensure_inquiry_schema($pdo);
+    fputcsv($output, ['ID', 'Name', 'Email', 'Subject', 'Message', 'Admin Reply', 'Status', 'Replied At', 'Created At']);
+    $rows = $pdo->query("SELECT id, name, email, subject, message, admin_reply, status, replied_at, created_at FROM inquiries ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($rows as $row) {
+        fputcsv($output, $row);
+    }
 } else { // default bookings
     fputcsv($output, ['Booking ID', 'Tourist Name', 'Email', 'Phone', 'Hotel Name', 'Destination', 'Check-In', 'Check-Out', 'Guests', 'Total Cost ($)', 'Status', 'Booking Date']);
     $sql = "SELECT b.id, u.full_name AS tourist_name, u.email, u.phone, h.name AS hotel_name, d.title AS destination_name, b.check_in_date, b.check_out_date, b.guests_count, b.total_price, b.status, b.created_at FROM bookings b JOIN users u ON b.user_id = u.id JOIN hotels h ON b.hotel_id = h.id JOIN destinations d ON h.destination_id = d.id ORDER BY b.id DESC";

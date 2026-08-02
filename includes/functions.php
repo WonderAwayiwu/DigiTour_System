@@ -93,14 +93,41 @@ function status_badge($status) {
     switch (strtolower($status)) {
         case 'confirmed':
         case 'approved':
+        case 'resolved':
             return '<span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa fa-check-circle me-1"></i> ' . ucfirst($status) . '</span>';
+        case 'replied':
+            return '<span class="badge bg-info-subtle text-info border border-info-subtle"><i class="fa fa-reply me-1"></i> Replied</span>';
         case 'pending':
+        case 'new':
             return '<span class="badge bg-warning-subtle text-warning border border-warning-subtle"><i class="fa fa-clock me-1"></i> ' . ucfirst($status) . '</span>';
         case 'cancelled':
         case 'rejected':
             return '<span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="fa fa-times-circle me-1"></i> ' . ucfirst($status) . '</span>';
         default:
             return '<span class="badge bg-secondary-subtle text-secondary"><i class="fa fa-info-circle me-1"></i> ' . ucfirst($status) . '</span>';
+    }
+}
+
+/**
+ * Ensure inquiries table supports reply workflow (safe on existing DBs).
+ */
+function dt_ensure_inquiry_schema(PDO $pdo) {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+
+    try {
+        $cols = $pdo->query("SHOW COLUMNS FROM inquiries")->fetchAll(PDO::FETCH_COLUMN);
+        if (!in_array('admin_reply', $cols, true)) {
+            $pdo->exec("ALTER TABLE inquiries ADD COLUMN admin_reply TEXT NULL AFTER message");
+        }
+        if (!in_array('replied_at', $cols, true)) {
+            $pdo->exec("ALTER TABLE inquiries ADD COLUMN replied_at TIMESTAMP NULL DEFAULT NULL AFTER admin_reply");
+        }
+        // Expand status enum for Resolved workflow
+        $pdo->exec("ALTER TABLE inquiries MODIFY COLUMN status ENUM('New','Replied','Resolved') DEFAULT 'New'");
+    } catch (Throwable $e) {
+        // Keep admin usable even if migration fails on locked hosts
     }
 }
 

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 if ($pdo) {
     $pdo->exec("CREATE TABLE IF NOT EXISTS `destination_images` (
@@ -19,6 +20,8 @@ if ($pdo) {
       `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (`hotel_id`) REFERENCES `hotels`(`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    dt_ensure_inquiry_schema($pdo);
 
     echo "TABLES_CREATED_SUCCESSFULLY\n";
 } else {
