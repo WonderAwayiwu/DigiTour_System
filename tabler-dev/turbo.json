@@ -1,0 +1,51 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
+    "DOCSEARCH_API_KEY",
+    "DOCSEARCH_APP_ID",
+    "DOCSEARCH_INDEX_NAME"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "demo/**"
+      ],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "dependsOn": [
+        "^clean"
+      ],
+      "cache": false
+    },
+    "bundlewatch": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": true
+    },
+    "type-check": {
+      "dependsOn": [
+        "^type-check"
+      ],
+      "cache": true
+    },
+    "test": {
+      "cache": false
+    },
+    "test:coverage": {
+      "cache": false
+    }
+  }
+}
