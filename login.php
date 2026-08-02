@@ -111,10 +111,10 @@ require_once __DIR__ . '/includes/navbar.php';
                     </div>
                 </div>
 
-                <div class="text-center mt-4 text-muted small">
+                <!-- <div class="text-center mt-4 text-muted small">
                     <p class="mb-1"><strong>Demo Admin:</strong> <code>admin@digitour.gh</code> | Pass: <code>admin123</code></p>
                     <p class="mb-0"><strong>Demo Tourist:</strong> <code>kwame@example.com</code> | Pass: <code>admin123</code></p>
-                </div>
+                </div> -->
 
             </div>
         </div>
